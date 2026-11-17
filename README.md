@@ -1,8 +1,19 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Aplicación de inventario para Latina's Design, construida con Next.js, TypeScript y Tailwind CSS.
 
 ## Getting Started
 
-First, run the development server:
+## Configuración local
+
+Configura las variables privadas en `.env.local`:
+
+- `DATABASE_URL`: conexión de PostgreSQL generada por Neon para el rol predeterminado del proyecto. Se usa solo desde el backend; nunca la expongas al navegador ni la declares con prefijo `NEXT_PUBLIC_`.
+- `NEON_AUTH_BASE_URL` y `NEON_AUTH_COOKIE_SECRET`: configuración de Neon Auth para el servidor.
+
+La API de catálogo verifica la sesión, que el perfil interno esté activo y el permiso `GESTIONAR_CATALOGO`. La carga inicial asigna ese permiso a `DUENA` y `ADMINISTRACION`; otros roles no pueden crear productos hasta que se les conceda expresamente. El servidor usa `DATABASE_URL`. Como el rol predeterminado de Neon puede tener privilegios amplios, la API debe validar cada operación y mantener la conexión exclusivamente en el servidor.
+
+## Desarrollo
+
+Inicia el servidor:
 
 ```bash
 npm run dev
