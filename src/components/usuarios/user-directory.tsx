@@ -34,7 +34,7 @@ export function UserDirectory(props: UserDirectoryProps) {
         <div className="rounded-2xl border border-zinc-200 bg-white p-12 text-center shadow-xs">
           <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-zinc-200 border-t-zinc-950" />
           <p className="mt-4 text-sm font-medium text-zinc-900">Cargando directorio de usuarios...</p>
-          <p className="mt-1 text-xs text-zinc-500">Consultando usuarios y catálogos en /api/usuarios</p>
+          <p className="mt-1 text-xs text-zinc-500">Consultando usuarios y opciones disponibles.</p>
         </div>
       )}
 

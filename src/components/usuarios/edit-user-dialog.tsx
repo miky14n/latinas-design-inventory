@@ -1,9 +1,11 @@
 "use client";
 
+import { UserDialog } from "./user-dialog";
 import type { Dispatch, FormEvent, SetStateAction } from "react";
 import type { EditFormData, Rol, Tienda, Usuario } from "./types";
 
 interface EditUserDialogProps {
+  actionError: string | null;
   roles: Rol[];
   tiendas: Tienda[];
   isSubmitting: boolean;
@@ -22,11 +24,10 @@ export function EditUserDialog(props: EditUserDialogProps) {
     <>
       {/* MODAL: Editar Usuario (PATCH /api/usuarios/[id]) */}
       {editingUser && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/40 p-4 backdrop-blur-xs">
-          <div className="relative w-full max-w-lg rounded-2xl border border-zinc-200 bg-white p-6 shadow-xl sm:p-7">
+        <UserDialog titleId="edit-user-title" busy={isSubmitting} error={props.actionError} onClose={() => setEditingUser(null)}>
             <div className="flex items-center justify-between border-b border-zinc-100 pb-4">
               <div>
-                <h2 className="text-lg font-bold text-zinc-950">Editar Usuario</h2>
+                <h2 id="edit-user-title" className="text-lg font-bold text-zinc-950">Editar Usuario</h2>
                 <p className="text-xs text-zinc-500">Modifica el rol, tienda asignada o estado del usuario.</p>
               </div>
               <button
@@ -120,8 +121,7 @@ export function EditUserDialog(props: EditUserDialogProps) {
                 </button>
               </div>
             </form>
-          </div>
-        </div>
+        </UserDialog>
       )}
 
 

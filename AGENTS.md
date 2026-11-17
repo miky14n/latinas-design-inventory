@@ -32,10 +32,16 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - El acceso a sesión, cookies, base de datos u otros datos dinámicos debe quedar dentro de un límite `<Suspense>` adecuado para evitar errores `blocking-prerender-dynamic`. No llamar `connection()` directamente en el `RootLayout` ni al inicio de una página sin un límite `Suspense`; si hace falta, mover el trabajo a un componente asíncrono hijo bajo ese límite.
 - Antes de iniciar `next dev`, comprobar si ya hay una instancia del proyecto en ejecución y reutilizar su puerto. No iniciar otro servidor o puerto si ya existe uno.
 
-## Arquitectura limpia obligatoria
-- Cada vista page.tsx define el contenido de su ruta y coordina sus flujos: carga de datos de pantalla, estado de interfaz y acciones que consumen la API. Si necesita metadatos o una comprobación de acceso de servidor, mantenerlos en el layout.tsx de la ruta para que page.tsx pueda ser la vista interactiva.
-- Al crear o reorganizar componentes visuales, ubicarlos en src/components/<funcionalidad>; no crear componentes ni carpetas _components dentro de src/app. Los componentes reciben datos y callbacks; no cargan datos ni coordinan los flujos propios de una vista. Crear componentes cuando exista reutilización real o cuando dividir una pieza grande mejore claramente su mantenimiento.
+## Organizacion de vistas y componentes
+- Mantener rutas y vistas en `src/app`; cada `page.tsx` define el contenido de su ruta y coordina sus flujos de interfaz y consumo de API.
+- Mantener el layout raiz existente en `src/app/layout.tsx`. No crear layouts adicionales por funcionalidad para envolver paginas, agregar encabezados o habilitar reutilizacion; cada vista compone su contenido y los componentes compartidos viven en `src/components/<funcionalidad>`.
+- No crear, mover ni dividir archivos por iniciativa propia. Hacerlo solo cuando el usuario lo solicite o lo apruebe expresamente. Extraer a `src/components` unicamente piezas con uso compartido real; las piezas propias de una pantalla permanecen en su vista.
+- Proteger las paginas con el mecanismo de autenticacion existente y validar rol/permisos en el servidor. Las API siempre vuelven a comprobar autenticacion y autorizacion antes de entregar datos o ejecutar operaciones.
+- Los diálogos deben tener un nombre accesible, gestionar el foco y permitir cerrarse con Escape cuando no haya una operación pendiente. Los errores y estados de carga deben comunicar pasos útiles sin mostrar detalles internos de los endpoints.
+- En formularios complejos, centralizar las transformaciones de estado relacionadas y evitar estados simultáneos incompatibles. Las validaciones del navegador orientan a la persona usuaria; el servidor conserva la validación de negocio.
 
+## Arquitectura limpia obligatoria
+- Cada vista `page.tsx` define el contenido de su ruta y coordina sus flujos: carga de datos de pantalla, estado de interfaz y acciones que consumen la API.
 - Mantener dependencias dirigidas hacia el núcleo: aplicación y dominio no importan Next.js, `NextResponse`, Neon Auth, `@neondatabase/serverless`, `server-only` ni módulos de interfaz.
 - Mantener el backend dentro de `src/app/api`. La conexión compartida a Neon vive en `src/app/api/_lib/db.ts`; cada funcionalidad puede guardar su lógica interna bajo `src/app/api/<funcionalidad>/_lib/`.
 - Para una funcionalidad, mantener una estructura corta y reconocible: `route.ts` para HTTP y `NextResponse`, `_lib/service.ts` para validación y reglas del flujo, `_lib/repository.ts` para SQL y transacciones del módulo, y `_lib/errors.ts` para errores del servicio. Añadir `_lib/identity.ts` solo cuando el adaptador externo tenga responsabilidades propias.

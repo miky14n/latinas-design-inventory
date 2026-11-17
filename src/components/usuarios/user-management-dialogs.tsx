@@ -7,6 +7,7 @@ import { EditUserDialog } from "./edit-user-dialog";
 import { UserStatusDialogs } from "./user-status-dialogs";
 
 interface UserManagementDialogsProps {
+  actionError: string | null;
   roles: Rol[];
   tiendas: Tienda[];
   isSubmitting: boolean;

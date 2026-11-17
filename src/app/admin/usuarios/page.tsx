@@ -1,12 +1,14 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
 import type { ApiResponseData, CreateFormData, EditFormData, Rol, StatusFilter, Tienda, Usuario } from "@/components/usuarios/types";
 import { UserManagementFilters } from "@/components/usuarios/user-management-filters";
 import { UserDirectory } from "@/components/usuarios/user-directory";
 import { UserManagementDialogs } from "@/components/usuarios/user-management-dialogs";
 
 export default function UsuariosPage() {
+  const router = useRouter();
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [roles, setRoles] = useState<Rol[]>([]);
   const [tiendas, setTiendas] = useState<Tienda[]>([]);
@@ -48,13 +50,20 @@ export default function UsuariosPage() {
   // Carga de datos desde GET /api/usuarios
   const fetchUsers = useCallback(async () => {
     try {
-      setIsLoading(true);
-      setLoadError(null);
       const res = await fetch("/api/usuarios", {
         method: "GET",
         cache: "no-store",
         headers: { Accept: "application/json" },
       });
+
+      if (res.status === 401) {
+        router.replace("/auth/sign-in");
+        return;
+      }
+      if (res.status === 403) {
+        router.replace("/");
+        return;
+      }
 
       if (!res.ok) {
         throw new Error(`Error al consultar usuarios (código HTTP ${res.status})`);
@@ -63,6 +72,7 @@ export default function UsuariosPage() {
       const body = await res.json();
       const payload: ApiResponseData = body?.data ?? body ?? {};
 
+      setLoadError(null);
       setUsuarios(Array.isArray(payload.usuarios) ? payload.usuarios : []);
       setRoles(Array.isArray(payload.roles) ? payload.roles : []);
       setTiendas(Array.isArray(payload.tiendas) ? payload.tiendas : []);
@@ -75,10 +85,12 @@ export default function UsuariosPage() {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [router]);
 
   useEffect(() => {
-    fetchUsers();
+    // La carga es asíncrona; los cambios de estado ocurren al resolver la petición.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void fetchUsers();
   }, [fetchUsers]);
 
   // Mapas para resolución de nombres de roles y tiendas
@@ -265,79 +277,35 @@ export default function UsuariosPage() {
     }
   };
 
-  // Envío de PATCH para desactivación lógica
-  const handleConfirmDeactivate = async () => {
-    if (!deactivatingUser) return;
+  // Ambas acciones conservan rol y tienda y solo cambian el estado de acceso.
+  const changeUserStatus = async (user: Usuario | null, active: boolean) => {
+    if (!user) return;
     setIsSubmitting(true);
     setActionError(null);
-
     try {
-      const res = await fetch(`/api/usuarios/${deactivatingUser.id}`, {
+      const res = await fetch(`/api/usuarios/${user.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          rol_id: deactivatingUser.rol_id,
-          tienda_id: deactivatingUser.tienda_id,
-          activo: false,
-        }),
+        body: JSON.stringify({ rol_id: user.rol_id, tienda_id: user.tienda_id, activo: active }),
       });
-
-      const resBody = await res.json().catch(() => ({}));
-
-      if (!res.ok) {
-        throw new Error(resBody?.error || `Error al desactivar usuario (código HTTP ${res.status})`);
-      }
-
-      const userName = deactivatingUser.name || deactivatingUser.nombre || deactivatingUser.email;
-      setDeactivatingUser(null);
-      setActionSuccess(
-        resBody?.aviso || `El usuario "${userName}" fue desactivado lógicamente. Su acceso ha sido revocado.`,
-      );
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(body?.error || "No se pudo actualizar el acceso del usuario.");
+      const name = user.name || user.nombre || user.email;
+      if (active) setReactivatingUser(null);
+      else setDeactivatingUser(null);
+      setActionSuccess(body?.aviso || (active
+        ? `El usuario "${name}" fue reactivado exitosamente.`
+        : `El usuario "${name}" fue desactivado lógicamente. Su acceso ha sido revocado.`));
       await fetchUsers();
     } catch (err: unknown) {
-      setActionError(
-        err instanceof Error ? err.message : "No se pudo desactivar al usuario.",
-      );
+      setActionError(err instanceof Error ? err.message : "No se pudo actualizar el acceso del usuario.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // Envío de PATCH para reactivación
-  const handleConfirmReactivate = async () => {
-    if (!reactivatingUser) return;
-    setIsSubmitting(true);
-    setActionError(null);
-
-    try {
-      const res = await fetch(`/api/usuarios/${reactivatingUser.id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          rol_id: reactivatingUser.rol_id,
-          tienda_id: reactivatingUser.tienda_id,
-          activo: true,
-        }),
-      });
-
-      const resBody = await res.json().catch(() => ({}));
-
-      if (!res.ok) {
-        throw new Error(resBody?.error || `Error al reactivar usuario (código HTTP ${res.status})`);
-      }
-
-      const userName = reactivatingUser.name || reactivatingUser.nombre || reactivatingUser.email;
-      setReactivatingUser(null);
-      setActionSuccess(`El usuario "${userName}" fue reactivado exitosamente.`);
-      await fetchUsers();
-    } catch (err: unknown) {
-      setActionError(
-        err instanceof Error ? err.message : "No se pudo reactivar al usuario.",
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  const handleConfirmDeactivate = () => changeUserStatus(deactivatingUser, false);
+  const handleConfirmReactivate = () => changeUserStatus(reactivatingUser, true);
 
   return (
     <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-8 px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
@@ -453,7 +421,7 @@ export default function UsuariosPage() {
       <UserDirectory
         isLoading={isLoading}
         loadError={loadError}
-        onRetry={fetchUsers}
+        onRetry={() => { setIsLoading(true); setLoadError(null); void fetchUsers(); }}
         usuarios={usuarios}
         filteredUsers={filteredUsers}
         rolesMap={rolesMap}
@@ -463,10 +431,11 @@ export default function UsuariosPage() {
         setStoreFilter={setStoreFilter}
         setStatusFilter={setStatusFilter}
         onEditUser={handleOpenEdit}
-        onDeactivateUser={setDeactivatingUser}
-        onReactivateUser={setReactivatingUser}
+        onDeactivateUser={(user) => { setActionError(null); setDeactivatingUser(user); }}
+        onReactivateUser={(user) => { setActionError(null); setReactivatingUser(user); }}
       />
       <UserManagementDialogs
+        actionError={actionError}
         roles={roles}
         tiendas={tiendas}
         isSubmitting={isSubmitting}

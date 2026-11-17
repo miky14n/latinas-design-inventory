@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import {
   CatalogoOptions,
@@ -42,47 +42,43 @@ export default function NuevoProductoPage() {
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   // Carga inicial de opciones desde GET /api/catalogo/productos
-  useEffect(() => {
-    let active = true;
-
-    async function fetchOptions() {
+  const fetchOptions = useCallback(async (signal?: AbortSignal) => {
       try {
-        setIsLoadingOptions(true);
-        setOptionsError(null);
-        const res = await fetch("/api/catalogo/productos");
+        if (!signal) {
+        }
+        const res = await fetch("/api/catalogo/productos", { signal });
 
         if (!res.ok) {
-          throw new Error(
-            `Error al consultar opciones del catálogo (código HTTP ${res.status})`
-          );
+          throw new Error("No se pudieron cargar las opciones del catálogo.");
         }
 
         const responseBody = await res.json();
         const data: CatalogoOptions = responseBody.data;
-        if (active) {
+        if (!signal?.aborted) {
           setOptions(data);
         }
       } catch (err: unknown) {
-        if (active) {
+        if (!signal?.aborted) {
           setOptionsError(
             err instanceof Error
               ? err.message
-              : "No fue posible conectar con /api/catalogo/productos"
+              : "No fue posible conectar con el servicio de catálogo."
           );
         }
       } finally {
-        if (active) {
+        if (!signal?.aborted) {
           setIsLoadingOptions(false);
         }
       }
-    }
-
-    fetchOptions();
-
-    return () => {
-      active = false;
-    };
   }, []);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    // La carga es asíncrona; los cambios de estado ocurren al resolver la petición.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void fetchOptions(controller.signal);
+    return () => controller.abort();
+  }, [fetchOptions]);
 
   // Handlers para datos generales
   const handleGeneralChange = <Field extends ProductGeneralField>(
@@ -282,34 +278,17 @@ export default function NuevoProductoPage() {
     }
   };
 
-  // Activar todas las variantes de la matriz
-  const handleActivateAllVariants = () => {
+  // Actualiza únicamente las combinaciones visibles; conserva códigos anteriores.
+  const setSelectedVariantsActive = (active: boolean) => {
     setFormData((prev) => {
       const updated = { ...prev.variants };
       prev.selectedColorIds.forEach((cId) => {
         prev.selectedTallaIds.forEach((tId) => {
           const key = `${cId}-${tId}`;
-          updated[key] = {
-            ...(updated[key] || { talla_id: tId, color_id: cId, codigo: "" }),
-            activo: true,
-          };
-        });
-      });
-      return { ...prev, variants: updated };
-    });
-  };
-
-  // Desactivar todas las variantes de la matriz
-  const handleDeactivateAllVariants = () => {
-    setFormData((prev) => {
-      const updated = { ...prev.variants };
-      prev.selectedColorIds.forEach((cId) => {
-        prev.selectedTallaIds.forEach((tId) => {
-          const key = `${cId}-${tId}`;
-          if (updated[key]) {
+          if (active || updated[key]) {
             updated[key] = {
-              ...updated[key],
-              activo: false,
+              ...(updated[key] || { talla_id: tId, color_id: cId, codigo: "" }),
+              activo: active,
             };
           }
         });
@@ -470,21 +449,24 @@ export default function NuevoProductoPage() {
   // Render en estado de carga de opciones
   if (isLoadingOptions) {
     return (
+      <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-8 px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
       <div className="rounded-2xl border border-zinc-200 bg-white p-12 text-center shadow-xs">
         <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-zinc-200 border-t-zinc-950" />
         <p className="mt-4 text-sm font-medium text-zinc-900">
           Cargando opciones del catálogo...
         </p>
         <p className="mt-1 text-xs text-zinc-500">
-          Consultando marcas, categorías, escalas y colores en /api/catalogo/productos
+          Consultando marcas, categorías, escalas y colores.
         </p>
       </div>
+      </main>
     );
   }
 
   // Render si falla la carga de opciones
   if (optionsError || !options) {
     return (
+      <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-8 px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
       <div className="rounded-2xl border border-red-200 bg-red-50/50 p-8 text-center">
         <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100 text-red-600">
           ⚠️
@@ -496,16 +478,21 @@ export default function NuevoProductoPage() {
           {optionsError}
         </p>
         <p className="mt-3 text-xs text-zinc-500">
-          Verifica que el servidor esté activo y que el endpoint GET /api/catalogo/productos responda el contrato esperado.
+          Comprueba tu conexión e inténtalo de nuevo.
         </p>
         <button
           type="button"
-          onClick={() => window.location.reload()}
+          onClick={() => {
+            setIsLoadingOptions(true);
+            setOptionsError(null);
+            void fetchOptions();
+          }}
           className="mt-5 inline-flex items-center gap-2 rounded-lg bg-zinc-950 px-4 py-2 text-xs font-medium text-white hover:bg-zinc-800"
         >
           Reintentar
         </button>
       </div>
+      </main>
     );
   }
 
@@ -515,7 +502,23 @@ export default function NuevoProductoPage() {
   );
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8" noValidate>
+    <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-8 px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
+      <header>
+        <nav aria-label="Ruta de navegación" className="flex items-center gap-2 text-xs text-zinc-500">
+          <Link href="/" className="hover:text-zinc-900">Inicio</Link>
+          <span>/</span>
+          <span>Catálogo</span>
+          <span>/</span>
+          <span className="font-medium text-zinc-900">Alta de Producto</span>
+        </nav>
+        <div className="mt-3">
+          <h1 className="text-2xl font-bold tracking-tight text-zinc-950 sm:text-3xl">Nuevo Producto</h1>
+          <p className="mt-1 text-sm text-zinc-600">
+            Registra un producto con su marca, categoría, escala de tallas y genera su matriz de variantes con códigos manuales.
+          </p>
+        </div>
+      </header>
+      <form onSubmit={handleSubmit} className="space-y-8" noValidate>
       {/* Alertas globales de éxito y error */}
       {submitSuccess && (
         <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900 shadow-xs">
@@ -606,8 +609,8 @@ export default function NuevoProductoPage() {
         selectedCategoria={selectedCategoria}
         onToggleVariant={handleToggleVariant}
         onChangeVariantCode={handleChangeVariantCode}
-        onActivateAllVariants={handleActivateAllVariants}
-        onDeactivateAllVariants={handleDeactivateAllVariants}
+        onActivateAllVariants={() => setSelectedVariantsActive(true)}
+        onDeactivateAllVariants={() => setSelectedVariantsActive(false)}
         onApplyCategoryPrefix={handleApplyCategoryPrefix}
         errors={errors}
       />
@@ -639,6 +642,7 @@ export default function NuevoProductoPage() {
           </button>
         </div>
       </div>
-    </form>
+      </form>
+    </main>
   );
 }

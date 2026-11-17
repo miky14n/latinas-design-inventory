@@ -1,9 +1,11 @@
 "use client";
 
+import { UserDialog } from "./user-dialog";
 import type { Dispatch, SetStateAction } from "react";
 import type { Usuario } from "./types";
 
 interface UserStatusDialogsProps {
+  actionError: string | null;
   isSubmitting: boolean;
   deactivatingUser: Usuario | null;
   setDeactivatingUser: Dispatch<SetStateAction<Usuario | null>>;
@@ -19,8 +21,7 @@ export function UserStatusDialogs(props: UserStatusDialogsProps) {
     <>
       {/* DIÁLOGO: Confirmar Desactivación Lógica */}
       {deactivatingUser && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/40 p-4 backdrop-blur-xs">
-          <div className="relative w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-6 shadow-xl">
+        <UserDialog titleId="deactivate-user-title" busy={isSubmitting} error={props.actionError} onClose={() => setDeactivatingUser(null)}>
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-amber-100 text-amber-600">
               <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                 <circle cx="12" cy="12" r="10" />
@@ -28,7 +29,7 @@ export function UserStatusDialogs(props: UserStatusDialogsProps) {
                 <line x1="12" y1="16" x2="12.01" y2="16" />
               </svg>
             </div>
-            <h3 className="mt-4 text-base font-bold text-zinc-950">
+            <h3 id="deactivate-user-title" className="mt-4 text-base font-bold text-zinc-950">
               ¿Desactivar acceso a este usuario?
             </h3>
             <p className="mt-2 text-xs text-zinc-600 leading-relaxed">
@@ -63,20 +64,18 @@ export function UserStatusDialogs(props: UserStatusDialogsProps) {
                 )}
               </button>
             </div>
-          </div>
-        </div>
+        </UserDialog>
       )}
 
       {/* DIÁLOGO: Confirmar Reactivación */}
       {reactivatingUser && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/40 p-4 backdrop-blur-xs">
-          <div className="relative w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-6 shadow-xl">
+        <UserDialog titleId="reactivate-user-title" busy={isSubmitting} error={props.actionError} onClose={() => setReactivatingUser(null)}>
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
               <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                 <path d="M20 6 9 17l-5-5" />
               </svg>
             </div>
-            <h3 className="mt-4 text-base font-bold text-zinc-950">
+            <h3 id="reactivate-user-title" className="mt-4 text-base font-bold text-zinc-950">
               ¿Reactivar usuario?
             </h3>
             <p className="mt-2 text-xs text-zinc-600 leading-relaxed">
@@ -108,8 +107,7 @@ export function UserStatusDialogs(props: UserStatusDialogsProps) {
                 )}
               </button>
             </div>
-          </div>
-        </div>
+        </UserDialog>
       )}
     </>
   );

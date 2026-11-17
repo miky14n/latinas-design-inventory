@@ -1,9 +1,11 @@
 "use client";
 
+import { UserDialog } from "./user-dialog";
 import type { Dispatch, FormEvent, SetStateAction } from "react";
 import type { CreateFormData, Rol, Tienda } from "./types";
 
 interface CreateUserDialogProps {
+  actionError: string | null;
   roles: Rol[];
   tiendas: Tienda[];
   isSubmitting: boolean;
@@ -22,11 +24,10 @@ export function CreateUserDialog(props: CreateUserDialogProps) {
     <>
       {/* MODAL: Crear Usuario (POST /api/usuarios) */}
       {isCreateOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/40 p-4 backdrop-blur-xs">
-          <div className="relative w-full max-w-lg rounded-2xl border border-zinc-200 bg-white p-6 shadow-xl sm:p-7">
+        <UserDialog titleId="create-user-title" busy={isSubmitting} error={props.actionError} onClose={() => setIsCreateOpen(false)}>
             <div className="flex items-center justify-between border-b border-zinc-100 pb-4">
               <div>
-                <h2 className="text-lg font-bold text-zinc-950">Nuevo Usuario</h2>
+                <h2 id="create-user-title" className="text-lg font-bold text-zinc-950">Nuevo Usuario</h2>
                 <p className="text-xs text-zinc-500">Crea el acceso y asigna el rol y tienda operativa.</p>
               </div>
               <button
@@ -176,8 +177,7 @@ export function CreateUserDialog(props: CreateUserDialogProps) {
                 </button>
               </div>
             </form>
-          </div>
-        </div>
+        </UserDialog>
       )}
 
 
