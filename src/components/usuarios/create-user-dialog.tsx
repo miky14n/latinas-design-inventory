@@ -9,8 +9,7 @@ interface CreateUserDialogProps {
   roles: Rol[];
   tiendas: Tienda[];
   isSubmitting: boolean;
-  isCreateOpen: boolean;
-  setIsCreateOpen: Dispatch<SetStateAction<boolean>>;
+  onClose: () => void;
   createData: CreateFormData;
   setCreateData: Dispatch<SetStateAction<CreateFormData>>;
   createErrors: Record<string, string>;
@@ -19,12 +18,10 @@ interface CreateUserDialogProps {
 }
 
 export function CreateUserDialog(props: CreateUserDialogProps) {
-  const { roles, tiendas, isSubmitting, isCreateOpen, setIsCreateOpen, createData, setCreateData, createErrors, setCreateErrors, onSubmit } = props;
+  const { roles, tiendas, isSubmitting, onClose, createData, setCreateData, createErrors, setCreateErrors, onSubmit } = props;
   return (
     <>
-      {/* MODAL: Crear Usuario (POST /api/usuarios) */}
-      {isCreateOpen && (
-        <UserDialog titleId="create-user-title" busy={isSubmitting} error={props.actionError} onClose={() => setIsCreateOpen(false)}>
+        <UserDialog titleId="create-user-title" busy={isSubmitting} error={props.actionError} onClose={() => onClose()}>
             <div className="flex items-center justify-between border-b border-zinc-100 pb-4">
               <div>
                 <h2 id="create-user-title" className="text-lg font-bold text-zinc-950">Nuevo Usuario</h2>
@@ -32,7 +29,7 @@ export function CreateUserDialog(props: CreateUserDialogProps) {
               </div>
               <button
                 type="button"
-                onClick={() => !isSubmitting && setIsCreateOpen(false)}
+                onClick={() => !isSubmitting && onClose()}
                 disabled={isSubmitting}
                 className="rounded-lg p-1.5 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700"
                 aria-label="Cerrar modal"
@@ -155,7 +152,7 @@ export function CreateUserDialog(props: CreateUserDialogProps) {
               <div className="mt-6 flex items-center justify-end gap-3 border-t border-zinc-100 pt-4">
                 <button
                   type="button"
-                  onClick={() => setIsCreateOpen(false)}
+                  onClick={() => onClose()}
                   disabled={isSubmitting}
                   className="rounded-xl border border-zinc-200 bg-white px-4 py-2 text-xs font-semibold text-zinc-700 hover:bg-zinc-50"
                 >
@@ -178,9 +175,6 @@ export function CreateUserDialog(props: CreateUserDialogProps) {
               </div>
             </form>
         </UserDialog>
-      )}
-
-
     </>
   );
 }

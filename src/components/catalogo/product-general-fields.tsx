@@ -66,6 +66,9 @@ export function ProductGeneralFields({
           <input
             type="text"
             id="codigo_interno"
+            maxLength={100}
+            aria-invalid={!!errors.codigo_interno}
+            aria-describedby={errors.codigo_interno ? "codigo-interno-error" : undefined}
             value={codigoInterno}
             onChange={(e) => onChange("codigo_interno", e.target.value)}
             placeholder="ej. POLO-BAS-01"
@@ -74,7 +77,7 @@ export function ProductGeneralFields({
             }`}
           />
           {errors.codigo_interno && (
-            <p className="mt-1 text-xs text-red-600">{errors.codigo_interno}</p>
+            <p id="codigo-interno-error" className="mt-1 text-xs text-red-600">{errors.codigo_interno}</p>
           )}
         </div>
 
@@ -86,6 +89,9 @@ export function ProductGeneralFields({
           <input
             type="text"
             id="nombre"
+            maxLength={200}
+            aria-invalid={!!errors.nombre}
+            aria-describedby={errors.nombre ? "nombre-error" : undefined}
             value={nombre}
             onChange={(e) => onChange("nombre", e.target.value)}
             placeholder="ej. Polo Clásico Cuello Redondo"
@@ -94,7 +100,7 @@ export function ProductGeneralFields({
             }`}
           />
           {errors.nombre && (
-            <p className="mt-1 text-xs text-red-600">{errors.nombre}</p>
+            <p id="nombre-error" className="mt-1 text-xs text-red-600">{errors.nombre}</p>
           )}
         </div>
 
@@ -105,6 +111,8 @@ export function ProductGeneralFields({
           </label>
           <select
             id="marca_id"
+            aria-invalid={!!errors.marca_id}
+            aria-describedby={errors.marca_id ? "marca-error" : undefined}
             value={marcaId}
             onChange={(e) => onChange("marca_id", e.target.value ? Number(e.target.value) : "")}
             className={`mt-1.5 block w-full rounded-lg border px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-950 ${
@@ -119,7 +127,7 @@ export function ProductGeneralFields({
             ))}
           </select>
           {errors.marca_id && (
-            <p className="mt-1 text-xs text-red-600">{errors.marca_id}</p>
+            <p id="marca-error" className="mt-1 text-xs text-red-600">{errors.marca_id}</p>
           )}
         </div>
 
@@ -147,6 +155,8 @@ export function ProductGeneralFields({
           </label>
           <select
             id="categoria_id"
+            aria-invalid={!!errors.categoria_id}
+            aria-describedby={errors.categoria_id ? "categoria-error" : undefined}
             value={categoriaId}
             onChange={(e) => {
               const val = e.target.value ? Number(e.target.value) : "";
@@ -166,7 +176,7 @@ export function ProductGeneralFields({
             ))}
           </select>
           {errors.categoria_id && (
-            <p className="mt-1 text-xs text-red-600">{errors.categoria_id}</p>
+            <p id="categoria-error" className="mt-1 text-xs text-red-600">{errors.categoria_id}</p>
           )}
         </div>
 

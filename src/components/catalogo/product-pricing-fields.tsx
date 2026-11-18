@@ -56,7 +56,10 @@ export function ProductPricingFields({
                   type="number"
                   step="0.01"
                   min="0"
+                  max="999999999999.99"
                   id={`precio-${lista.id}`}
+                  aria-invalid={!!errorMsg}
+                  aria-describedby={errorMsg ? `precio-error-${lista.id}` : undefined}
                   value={val}
                   onChange={(e) => onChangePrecio(lista.id, e.target.value)}
                   placeholder="0.00"
@@ -66,7 +69,7 @@ export function ProductPricingFields({
                 />
               </div>
               {errorMsg && (
-                <p className="mt-1 text-xs text-red-600">{errorMsg}</p>
+                <p id={`precio-error-${lista.id}`} className="mt-1 text-xs text-red-600">{errorMsg}</p>
               )}
             </div>
           );

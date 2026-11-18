@@ -148,10 +148,11 @@ export function VariantMatrixTable({
                 {/* Fixed Color Column */}
                 <td className="sticky left-0 z-10 border-r border-zinc-200 bg-white px-4 py-3 font-medium text-zinc-900">
                   <div className="flex items-center gap-2">
-                    <span aria-hidden="true" className="h-3.5 w-3.5 shrink-0 rounded-full border border-zinc-300 bg-zinc-200" />
+                    {color.hex && /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i.test(color.hex.trim()) && (
+                      <span aria-hidden="true" className="h-4 w-4 shrink-0 rounded border border-zinc-400" style={{ backgroundColor: color.hex.trim() }} />
+                    )}
                     <span className="truncate">{color.nombre}</span>
                     <span className="text-[11px] text-zinc-400">({color.codigo})</span>
-                    {color.hex && <span className="text-[11px] text-zinc-400">{color.hex}</span>}
                   </div>
                 </td>
 
@@ -176,6 +177,7 @@ export function VariantMatrixTable({
                         <label className="inline-flex items-center gap-1.5 cursor-pointer">
                           <input
                             type="checkbox"
+                            aria-label={`Incluir variante color ${color.nombre}, talla ${talla.valor}`}
                             checked={isActivo}
                             onChange={() => onToggleVariant(color.id, talla.id)}
                             className="h-3.5 w-3.5 rounded-sm border-zinc-300 text-zinc-950 focus:ring-zinc-950"
@@ -189,6 +191,9 @@ export function VariantMatrixTable({
                           <div className="space-y-1">
                             <input
                               type="text"
+                              aria-label={`Código de color ${color.nombre}, talla ${talla.valor}`}
+                              aria-invalid={hasError}
+                              aria-describedby={hasError ? `error-${key}` : undefined}
                               maxLength={7}
                               value={cell.codigo}
                               onChange={(e) =>
@@ -218,7 +223,7 @@ export function VariantMatrixTable({
                               {isComplete && <span className="text-emerald-700">✓ Listo</span>}
                             </div>
                             {hasError && (
-                              <p className="text-[10px] text-red-600">{errors[errorKey]}</p>
+                              <p id={`error-${key}`} className="text-[10px] text-red-600">{errors[errorKey]}</p>
                             )}
                           </div>
                         )}

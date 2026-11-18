@@ -7,6 +7,11 @@ import { UserManagementFilters } from "@/components/usuarios/user-management-fil
 import { UserDirectory } from "@/components/usuarios/user-directory";
 import { UserManagementDialogs } from "@/components/usuarios/user-management-dialogs";
 
+type UserDialogState =
+  | { type: "create" }
+  | { type: "edit" | "deactivate" | "reactivate"; user: Usuario }
+  | null;
+
 export default function UsuariosPage() {
   const router = useRouter();
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
@@ -27,10 +32,8 @@ export default function UsuariosPage() {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   // Modales
-  const [isCreateOpen, setIsCreateOpen] = useState<boolean>(false);
-  const [editingUser, setEditingUser] = useState<Usuario | null>(null);
-  const [deactivatingUser, setDeactivatingUser] = useState<Usuario | null>(null);
-  const [reactivatingUser, setReactivatingUser] = useState<Usuario | null>(null);
+  const [dialog, setDialog] = useState<UserDialogState>(null);
+  const editingUser = dialog?.type === "edit" ? dialog.user : null;
 
   // Estados de formulario
   const [createData, setCreateData] = useState<CreateFormData>({
@@ -153,7 +156,7 @@ export default function UsuariosPage() {
   const handleOpenEdit = (user: Usuario) => {
     setActionError(null);
     setEditErrors({});
-    setEditingUser(user);
+    setDialog({ type: "edit", user });
     setEditData({
       rol_id: String(user.rol_id ?? ""),
       tienda_id: user.tienda_id !== null && user.tienda_id !== undefined ? String(user.tienda_id) : "",
@@ -171,7 +174,7 @@ export default function UsuariosPage() {
       rol_id: firstAssignableRole ? String(firstAssignableRole.id) : "",
       tienda_id: "",
     });
-    setIsCreateOpen(true);
+    setDialog({ type: "create" });
   };
 
   // Envío de POST /api/usuarios
@@ -220,7 +223,7 @@ export default function UsuariosPage() {
         throw new Error(resBody?.error || `Error al crear usuario (código HTTP ${res.status})`);
       }
 
-      setIsCreateOpen(false);
+      setDialog(null);
       setActionSuccess(resBody?.aviso || `Usuario "${payload.name}" registrado correctamente.`);
       await fetchUsers();
     } catch (err: unknown) {
@@ -265,7 +268,7 @@ export default function UsuariosPage() {
         throw new Error(resBody?.error || `Error al actualizar usuario (código HTTP ${res.status})`);
       }
 
-      setEditingUser(null);
+      setDialog(null);
       setActionSuccess(`Perfil de "${editingUser.name || editingUser.nombre || editingUser.email}" actualizado correctamente.`);
       await fetchUsers();
     } catch (err: unknown) {
@@ -291,8 +294,7 @@ export default function UsuariosPage() {
       const body = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(body?.error || "No se pudo actualizar el acceso del usuario.");
       const name = user.name || user.nombre || user.email;
-      if (active) setReactivatingUser(null);
-      else setDeactivatingUser(null);
+      setDialog(null);
       setActionSuccess(body?.aviso || (active
         ? `El usuario "${name}" fue reactivado exitosamente.`
         : `El usuario "${name}" fue desactivado lógicamente. Su acceso ha sido revocado.`));
@@ -304,8 +306,11 @@ export default function UsuariosPage() {
     }
   };
 
-  const handleConfirmDeactivate = () => changeUserStatus(deactivatingUser, false);
-  const handleConfirmReactivate = () => changeUserStatus(reactivatingUser, true);
+  const handleConfirmStatus = () => {
+    if (dialog?.type === "deactivate" || dialog?.type === "reactivate") {
+      void changeUserStatus(dialog.user, dialog.type === "reactivate");
+    }
+  };
 
   return (
     <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-8 px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
@@ -431,34 +436,27 @@ export default function UsuariosPage() {
         setStoreFilter={setStoreFilter}
         setStatusFilter={setStatusFilter}
         onEditUser={handleOpenEdit}
-        onDeactivateUser={(user) => { setActionError(null); setDeactivatingUser(user); }}
-        onReactivateUser={(user) => { setActionError(null); setReactivatingUser(user); }}
+        onDeactivateUser={(user) => { setActionError(null); setDialog({ type: "deactivate", user }); }}
+        onReactivateUser={(user) => { setActionError(null); setDialog({ type: "reactivate", user }); }}
       />
       <UserManagementDialogs
         actionError={actionError}
         roles={roles}
         tiendas={tiendas}
         isSubmitting={isSubmitting}
-        isCreateOpen={isCreateOpen}
-        setIsCreateOpen={setIsCreateOpen}
+        dialog={dialog}
+        onClose={() => setDialog(null)}
         createData={createData}
         setCreateData={setCreateData}
         createErrors={createErrors}
         setCreateErrors={setCreateErrors}
         handleSubmitCreate={handleSubmitCreate}
-        editingUser={editingUser}
-        setEditingUser={setEditingUser}
         editData={editData}
         setEditData={setEditData}
         editErrors={editErrors}
         setEditErrors={setEditErrors}
         handleSubmitEdit={handleSubmitEdit}
-        deactivatingUser={deactivatingUser}
-        setDeactivatingUser={setDeactivatingUser}
-        handleConfirmDeactivate={handleConfirmDeactivate}
-        reactivatingUser={reactivatingUser}
-        setReactivatingUser={setReactivatingUser}
-        handleConfirmReactivate={handleConfirmReactivate}
+        onConfirmStatus={handleConfirmStatus}
       />
       </div>
     </main>
