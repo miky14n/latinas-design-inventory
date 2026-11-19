@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useState, type FormEvent } from "react";
+import { RgbPaletColor } from "@/components/catalogo/rgbpaletcolor";
 import { useRouter } from "next/navigation";
 
 const sections = [
@@ -38,6 +39,7 @@ function colorName(hex: string) {
 function colorCode(name: string) {
   return name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z]/gi, "").slice(0, 3).toUpperCase();
 }
+
 
 export default function CatalogConfigurationPage() {
   const router = useRouter();
@@ -147,9 +149,9 @@ export default function CatalogConfigurationPage() {
               <label className="text-xs font-medium text-zinc-700">Código<input required maxLength={50} value={form.codigo} onChange={(e) => { setCustomColorCode(true); update("codigo", e.target.value); }} className={fieldClass} /><span className="mt-1 block text-xs font-normal text-zinc-500">Se sugiere con las tres primeras letras del nombre; puedes editarlo.</span></label>
               <div>
                 <label htmlFor="color-hex" className="text-xs font-medium text-zinc-700">Color hexadecimal (opcional)</label>
-                <div className="mt-1 flex items-center gap-3">
-                  <input id="color-hex" value={form.hex} onChange={(e) => update("hex", e.target.value)} placeholder="#RRGGBB" pattern="#[0-9a-fA-F]{6}" maxLength={7} className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-950" />
-                  <label className="shrink-0 text-xs font-medium text-zinc-700">Elegir color<input type="color" value={/^#[0-9a-f]{6}$/i.test(form.hex) ? form.hex : "#000000"} onChange={(e) => selectColor(e.target.value)} className="ml-2 h-10 w-12 cursor-pointer rounded border border-zinc-300 bg-white p-1 align-middle" /></label>
+                <div className="mt-1 flex flex-wrap items-center gap-3">
+                  <input id="color-hex" value={form.hex} onChange={(e) => update("hex", e.target.value)} placeholder="#RRGGBB" pattern="#[0-9a-fA-F]{6}" maxLength={7} className="min-w-32 flex-1 rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-950" />
+                  <RgbPaletColor key={form.id ?? "nuevo"} value={form.hex} onChange={selectColor} />
                 </div>
                 <p className="mt-1 text-xs text-zinc-500">El selector propone un nombre aproximado; puedes editarlo y ajustar el código.</p>
               </div>

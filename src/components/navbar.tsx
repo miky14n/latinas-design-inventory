@@ -8,7 +8,7 @@ const NAV_ITEMS = [
   { label: "Inicio", href: "/", active: (pathname: string) => pathname === "/" },
   {
     label: "Catálogo",
-    href: "/catalogo/productos/nuevo",
+    href: "/catalogo/productos",
     active: (pathname: string) => pathname.startsWith("/catalogo/productos"),
   },
   { label: "Configuración del catálogo", href: "/catalogo/configuracion", active: (pathname: string) => pathname.startsWith("/catalogo/configuracion") },
