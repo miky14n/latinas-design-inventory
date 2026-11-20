@@ -128,7 +128,7 @@ export class UsuarioQueries {
   }
 }
 
-export function withOwner<T>(
+export function withUserManager<T>(
   actorId: string,
   operation: (repository: UsuarioQueries) => Promise<T>,
 ) {
@@ -137,13 +137,13 @@ export function withOwner<T>(
       actorId,
     ]);
     const owner = await client.query<{ id: string }>(
-      `SELECT u.id FROM usuario u JOIN rol r ON r.id = u.rol_id AND r.activo WHERE u.id = $1 AND u.activo AND r.codigo = 'DUENA'`,
+      `SELECT u.id FROM usuario u JOIN rol r ON r.id = u.rol_id AND r.activo WHERE u.id = $1 AND u.activo AND r.codigo IN ('DUENA', 'SUPERUSUARIO')`,
       [actorId],
     );
     if (!owner.rows[0])
       throw new UsuarioError(
         "FORBIDDEN",
-        "Solo la dueña puede gestionar usuarios.",
+        "Solo una cuenta autorizada puede gestionar usuarios.",
       );
     return operation(new UsuarioQueries(client));
   });

@@ -7,13 +7,12 @@ import { useState } from "react";
 const NAV_ITEMS = [
   { label: "Inicio", href: "/", active: (pathname: string) => pathname === "/" },
   {
-    label: "Catálogo",
+    label: "Productos",
     href: "/catalogo/productos",
     active: (pathname: string) => pathname.startsWith("/catalogo/productos"),
   },
   { label: "Configuración del catálogo", href: "/catalogo/configuracion", active: (pathname: string) => pathname.startsWith("/catalogo/configuracion") },
-  { label: "Ingresos", href: "/inventario/ingresos", active: (pathname: string) => pathname === "/inventario/ingresos" },
-  { label: "Módulos", href: "/#modules-heading", active: () => false },
+  { label: "Recepción de mercadería", href: "/inventario/recepciones", active: (pathname: string) => pathname === "/inventario/recepciones" },
 ];
 
 export function Navbar({ canManageUsers = false }: { canManageUsers?: boolean }) {

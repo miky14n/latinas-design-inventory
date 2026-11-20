@@ -35,11 +35,11 @@ export async function registrar(db: PoolClient, ingreso: ReturnType<typeof leerI
   const almacen = await db.query("SELECT id FROM almacen WHERE codigo='CENTRAL' AND tienda_id IS NULL AND activo FOR SHARE");
   if (!almacen.rowCount) throw new IngresoError("DATOS", "El almacén central debe estar activo.");
   const origen = await db.query("SELECT id FROM origen_mercaderia WHERE id=$1 AND activo FOR SHARE", [ingreso.origen]);
-  if (!origen.rowCount) throw new IngresoError("DATOS", "Selecciona un origen activo.");
+  if (!origen.rowCount) throw new IngresoError("DATOS", "Selecciona un proveedor o una fábrica activa.");
   const variantes = await db.query(`SELECT v.id FROM variante v JOIN producto p ON p.id=v.producto_id
     WHERE v.id=ANY($1::bigint[]) AND v.activo AND p.activo ORDER BY v.id FOR SHARE OF v,p`,
     [ingreso.lineas.map(l => l.variante_id)]);
-  if (variantes.rowCount !== ingreso.lineas.length) throw new IngresoError("DATOS", "Una variante dejó de estar disponible. Revisa el detalle.");
+  if (variantes.rowCount !== ingreso.lineas.length) throw new IngresoError("DATOS", "Un producto, talla o color dejó de estar disponible. Revisa el detalle.");
   const documento = await db.query("SELECT registrar_ingreso($1,$2,$3,$4::jsonb) AS id",
     [almacen.rows[0].id, ingreso.origen, referencia, JSON.stringify(ingreso.lineas)]);
   return (await db.query("SELECT numero FROM documento_inventario WHERE id=$1", [documento.rows[0].id])).rows[0];

@@ -4,7 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
-import { requireDuena } from "@/app/api/usuarios/_lib/service";
+import { requireGestionUsuarios } from "@/app/api/usuarios/_lib/service";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 async function OwnerAwareNavbar() {
   let canManageUsers = false;
   try {
-    await requireDuena();
+    await requireGestionUsuarios();
     canManageUsers = true;
   } catch {
     canManageUsers = false;

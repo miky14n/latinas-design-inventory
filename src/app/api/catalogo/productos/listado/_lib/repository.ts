@@ -5,7 +5,7 @@ export interface ProductFilters { query: string; category: string | null; brand:
 export async function authorize(client: PoolClient, userId: string) {
   await client.query("SELECT set_config('app.usuario_id', $1, true)", [userId]);
   const result = await client.query<{ ver_reservas: boolean }>(`SELECT
-    (r.codigo IN ('DUENA', 'ADMINISTRACION') OR EXISTS (
+    (r.codigo IN ('DUENA', 'ADMINISTRACION', 'SUPERUSUARIO') OR EXISTS (
       SELECT 1 FROM tienda t WHERE t.id = u.tienda_id AND t.activo AND t.tipo = 'MAYORISTA'
     )) AS ver_reservas
     FROM usuario u JOIN rol r ON r.id = u.rol_id AND r.activo

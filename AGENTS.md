@@ -24,7 +24,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - La base de Neon configurada es producción. Tratar toda consulta o mutación mediante sus credenciales como acceso a producción; no ejecutar scripts, migraciones ni cambios de datos o Auth salvo autorización explícita para esa operación.
 - Verificar la sesión de Neon Auth en el servidor. El ID de usuario debe obtenerse de esa sesión, nunca del cuerpo de la solicitud, y establecerse con `set_config('app.usuario_id', ..., true)` en la misma transacción que accede a datos protegidos.
 - En el esquema de la aplicación `usuario.id` es texto y el ID de `neon_auth."user".id` es UUID. Al unir ambas tablas, comparar tipos explícitamente, por ejemplo `neon_auth."user".id::text = usuario.id`; no cambiar el tipo de `usuario.id` para resolver esa comparación.
-- Los permisos del gestor se determinan por el rol interno activo `DUENA`. El rol `admin` de Neon Auth es un privilegio distinto, necesario para algunas operaciones administrativas de Auth; no asignarlo automáticamente por seleccionar un rol de la aplicación.
+- La gestión de usuarios está disponible para los roles internos activos `DUENA` y `SUPERUSUARIO`. Debe quedar al menos una cuenta activa con rol `DUENA`. El rol `admin` de Neon Auth es un privilegio distinto, necesario para algunas operaciones administrativas de Auth; no asignarlo automáticamente por seleccionar un rol de la aplicación.
 - La baja de usuarios es lógica: marcar `usuario.activo = false`, conservar el perfil y el historial, y revocar sesiones cuando corresponda. No borrar físicamente identidades ni perfiles desde el panel.
 
 ## Next.js instalado

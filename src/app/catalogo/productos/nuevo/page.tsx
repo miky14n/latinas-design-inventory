@@ -466,7 +466,7 @@ export default function NuevoProductoPage() {
 
       setSubmitState({
         status: "success",
-        message: `Producto "${payload.nombre}" registrado exitosamente con ${payload.variantes.length} variante(s).`,
+        message: `Producto "${payload.nombre}" registrado con ${payload.variantes.length} combinaciones de talla y color.`,
       });
       // Reiniciar formulario
       setFormData(INITIAL_FORM_DATA);
@@ -542,12 +542,12 @@ export default function NuevoProductoPage() {
           <span>/</span>
           <span>Catálogo</span>
           <span>/</span>
-          <span className="font-medium text-zinc-900">Alta de Producto</span>
+          <span className="font-medium text-zinc-900">Registrar producto</span>
         </nav>
         <div className="mt-3">
-          <h1 className="text-2xl font-bold tracking-tight text-zinc-950 sm:text-3xl">Nuevo Producto</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-zinc-950 sm:text-3xl">Registrar producto</h1>
           <p className="mt-1 text-sm text-zinc-600">
-            Registra un producto con su marca, categoría, escala de tallas y genera su matriz de variantes con códigos manuales.
+            Registra el producto, sus tallas y colores. Para agregar unidades al inventario, registra una recepción de mercadería.
           </p>
           <Link href="/catalogo/configuracion" className="mt-3 inline-block text-sm font-medium text-zinc-700 underline hover:text-zinc-950">Configurar opciones del catálogo</Link>
         </div>
@@ -672,7 +672,7 @@ export default function NuevoProductoPage() {
             {submitState.status === "submitting" && (
               <span className="inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/20 border-t-white" />
             )}
-            <span>{submitState.status === "submitting" ? "Guardando producto..." : "Guardar Producto y Variantes"}</span>
+            <span>{submitState.status === "submitting" ? "Guardando producto..." : "Guardar producto, tallas y colores"}</span>
           </button>
         </div>
       </div>

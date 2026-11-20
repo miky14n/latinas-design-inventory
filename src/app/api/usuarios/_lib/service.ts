@@ -7,7 +7,7 @@ import {
   revokeIdentitySessions,
   updateIdentityName,
 } from "./identity";
-import { withOwner, type UsuarioQueries } from "./repository";
+import { withUserManager, type UsuarioQueries } from "./repository";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -98,14 +98,14 @@ async function validateAssignment(
     );
 }
 
-export async function requireDuena() {
+export async function requireGestionUsuarios() {
   const actor = await requireActor();
-  await withOwner(actor, async () => undefined);
+  await withUserManager(actor, async () => undefined);
 }
 
 export async function listUsers() {
   const actor = await requireActor();
-  return withOwner(actor, async (repository) => {
+  return withUserManager(actor, async (repository) => {
     const [usuarios, roles, tiendas] = await Promise.all([
       repository.listUsers(),
       repository.listRoles(),
@@ -121,7 +121,7 @@ export async function createUser(
 ) {
   const actor = await requireActor();
   const input = parseCreate(value);
-  const existingIdentity = await withOwner(actor, async (repository) => {
+  const existingIdentity = await withUserManager(actor, async (repository) => {
     await validateAssignment(repository, input.rol_id, input.tienda_id);
     const identity = await repository.findAuthIdentityByEmail(input.email);
     if (!identity) return null;
@@ -140,7 +140,7 @@ export async function createUser(
   const identity =
     existingIdentity ??
     (await createIdentity({ email: input.email, name: input.name }));
-  await withOwner(actor, async (repository) => {
+  await withUserManager(actor, async (repository) => {
     await validateAssignment(repository, input.rol_id, input.tienda_id);
     if (await repository.profileExists(identity.id))
       throw new UsuarioError(
@@ -181,7 +181,7 @@ export async function updateUser(id: string, value: unknown) {
       "La cuenta seleccionada no es válida.",
     );
   const input = parseUpdate(value);
-  await withOwner(actor, async (repository) => {
+  await withUserManager(actor, async (repository) => {
     await repository.lockOwnerChanges();
     const target = await repository.findProfileForUpdate(id);
     if (!target)
@@ -197,10 +197,10 @@ export async function updateUser(id: string, value: unknown) {
         "CONFLICT",
         "El rol de dueña se reserva para la cuenta principal.",
       );
-    if (id === actor && role.codigo !== "DUENA")
+    if (id === actor && target.rol_id !== String(input.rol_id))
       throw new UsuarioError(
         "CONFLICT",
-        "No puedes cambiar el rol de la cuenta principal desde este panel.",
+        "No puedes cambiar tu propio rol desde este panel.",
       );
     if (
       input.tienda_id !== null &&

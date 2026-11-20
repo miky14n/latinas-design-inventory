@@ -10,14 +10,14 @@ export function leerIngreso(body: unknown) {
     || !/^[a-f\d]{8}-(?:[a-f\d]{4}-){3}[a-f\d]{12}$/i.test(body.clave)
     || !("origen" in body) || !id(body.origen)
     || !("lineas" in body) || !Array.isArray(body.lineas) || !body.lineas.length) {
-    throw new IngresoError("DATOS", "Selecciona el origen y agrega al menos una variante.");
+    throw new IngresoError("DATOS", "Selecciona el proveedor o la fábrica y agrega al menos un producto.");
   }
   const variantes = new Set<string>();
   const lineas = body.lineas.map((linea: unknown) => {
     if (!linea || typeof linea !== "object" || !("variante_id" in linea) || !id(linea.variante_id)
       || !("cantidad" in linea) || typeof linea.cantidad !== "number" || !Number.isInteger(linea.cantidad)
       || linea.cantidad < 1 || linea.cantidad > 2147483647 || variantes.has(linea.variante_id)) {
-      throw new IngresoError("DATOS", "Cada variante debe aparecer una vez y tener una cantidad entera positiva.");
+      throw new IngresoError("DATOS", "Cada talla y color debe aparecer una vez y tener una cantidad entera positiva.");
     }
     variantes.add(linea.variante_id);
     return { variante_id: linea.variante_id, cantidad: linea.cantidad };

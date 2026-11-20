@@ -123,7 +123,7 @@ export default function CatalogConfigurationPage() {
         <div><nav aria-label="Ruta de navegación" className="text-xs text-zinc-500"><Link href="/" className="hover:text-zinc-900">Inicio</Link> / Catálogo / Configuración</nav>
           <h1 className="mt-3 text-2xl font-bold tracking-tight text-zinc-950 sm:text-3xl">Configuración del catálogo</h1>
           <p className="mt-1 text-sm text-zinc-600">Administra las opciones utilizadas al registrar productos.</p></div>
-        <Link href="/catalogo/productos/nuevo" className="rounded-lg border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50">Nuevo producto</Link>
+        <Link href="/catalogo/productos/nuevo" className="rounded-lg border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50">Registrar producto</Link>
       </header>
       <div aria-label="Secciones del catálogo" className="flex flex-wrap gap-2 border-b border-zinc-200 pb-4">
         {sections.map((entry) => <button key={entry.key} type="button" disabled={busy} aria-pressed={section === entry.key} onClick={() => { setSection(entry.key); setForm(null); setError(""); setNotice(""); setQuery(""); }}
