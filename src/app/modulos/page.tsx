@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { connection } from "next/server";
 import { Suspense } from "react";
 import { auth } from "@/lib/server/auth";
 import { requireGestionUsuarios } from "@/app/api/usuarios/_lib/service";
@@ -25,6 +26,7 @@ export default function ModulosPage() {
 }
 
 async function ModulosInternos() {
+  await connection();
   const { data, error } = await auth.getSession();
   if (error || !data?.user) redirect("/auth/sign-in");
   let tieneAcceso = false;

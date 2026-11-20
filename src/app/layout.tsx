@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
+import { connection } from "next/server";
 import "./globals.css";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
@@ -22,6 +23,7 @@ export const metadata: Metadata = {
 };
 
 async function OwnerAwareNavbar() {
+  await connection();
   let canManageUsers = false;
   try {
     await requireGestionUsuarios();
