@@ -1,0 +1,5 @@
+# NEON_BRANCH holds a Neon branch name (a common word such as "production"),
+# not a credential. Secrets scanning flags every ordinary occurrence of that
+# word in the repo and build output, so it is excluded from the scan.
+[build.environment]
+  SECRETS_SCAN_OMIT_KEYS = "NEON_BRANCH"
