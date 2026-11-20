@@ -3,6 +3,21 @@ import { randomBytes } from "node:crypto";
 import { auth } from "@/lib/server/auth";
 import { UsuarioError } from "./errors";
 
+type AdminResult<T> = {
+  data: T | null;
+  error: { code?: string; status?: number } | null;
+};
+
+// El SDK expone estas operaciones en el servidor, aunque su tipo de admin
+// se infiere como unknown con la versión instalada.
+type AdminApi = {
+  createUser(input: { email: string; name: string; password: string }): Promise<AdminResult<{ user: { id: string } }>>;
+  updateUser(input: { userId: string; data: { name: string } }): Promise<AdminResult<unknown>>;
+  revokeUserSessions(input: { userId: string }): Promise<AdminResult<unknown>>;
+};
+
+const admin = auth.admin as AdminApi;
+
 export async function currentUserId() {
   const { data, error } = await auth.getSession();
   if (error)
@@ -15,7 +30,7 @@ export async function currentUserId() {
 
 export async function createIdentity(input: { email: string; name: string }) {
   try {
-    const result = await auth.admin.createUser({
+    const result = await admin.createUser({
       email: input.email,
       name: input.name,
       password: randomBytes(36).toString("base64url"),
@@ -52,7 +67,7 @@ export async function requestPasswordReset(email: string, redirectTo: string) {
 
 export async function updateIdentityName(id: string, name: string) {
   try {
-    return !(await auth.admin.updateUser({ userId: id, data: { name } })).error;
+    return !(await admin.updateUser({ userId: id, data: { name } })).error;
   } catch {
     return false;
   }
@@ -60,7 +75,7 @@ export async function updateIdentityName(id: string, name: string) {
 
 export async function revokeIdentitySessions(id: string) {
   try {
-    return !(await auth.admin.revokeUserSessions({ userId: id })).error;
+    return !(await admin.revokeUserSessions({ userId: id })).error;
   } catch {
     return false;
   }
