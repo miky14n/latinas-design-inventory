@@ -17,6 +17,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## Convenciones del proyecto
 
+- Ejecutar solo los pasos necesarios para cumplir la solicitud. Aprovechar el contexto y los resultados disponibles, evitando consultas, búsquedas, pruebas o acciones redundantes que no aporten a la respuesta o a la verificación requerida.
 - Diseñar todas las interfaces con Tailwind CSS. No agregar CSS plano, módulos CSS ni estilos en línea; consultar al usuario antes de cualquier excepción.
 - Mantener las consultas SQL, validaciones de negocio y credenciales en el servidor. Las API viven en `src/app/api`, responden con `NextResponse` y el navegador solo consume sus endpoints.
 - La conexión de la aplicación es la variable `DATABASE_URL` del rol predeterminado de Neon. No introducir ni migrar a un rol alterno como `DATABASE_URL_APP` sin indicación del usuario.

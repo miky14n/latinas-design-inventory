@@ -2,7 +2,7 @@ import { auth } from "@/lib/server/auth";
 
 export default auth.middleware({
   loginUrl: "/auth/sign-in",
-  publicRoutes: ["/auth/sign-in"],
+  publicRoutes: ["/auth/sign-in", "/escanear", "/api/escaneo"],
 });
 
 export const config = {

@@ -12,10 +12,11 @@ type Ubicacion = {
   nombre: string;
   codigo: string;
   direccion: string | null;
+  admite_marca: boolean;
   disponible: string;
   desglose: { fisicas: string; reservadas: string } | null;
 };
-type Detail = { ubicaciones: Ubicacion[]; producto: Product & { descripcion: string | null; escala: string; modelo: string | null }; variantes: { id: string; activo: boolean; talla: string; color: string; codigos: string[]; hex: string | null }[] };
+type Detail = { ubicaciones: Ubicacion[]; producto: Omit<Product, "variantes"> & { descripcion: string | null; escala: string; modelo: string | null }; variantes: { id: string; activo: boolean; talla: string; color: string; codigos: string[]; hex: string | null }[] };
 type Load<T> = { status: "loading" } | { status: "error"; message: string } | { status: "ready"; data: T };
 const inputClass = "mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-950";
 
@@ -119,7 +120,7 @@ export default function ProductosPage() {
               <li key={ubicacion.id} className="rounded-xl border border-zinc-200 p-4">
                 <h5 className="font-medium text-zinc-950">{ubicacion.nombre}</h5>
                 <p className="mt-1 text-xs text-zinc-600">{ubicacion.codigo}{ubicacion.direccion && ` · ${ubicacion.direccion}`}</p>
-                <dl className="mt-3 space-y-1 text-sm text-zinc-700">
+                {ubicacion.admite_marca ? <dl className="mt-3 space-y-1 text-sm text-zinc-700">
                   <div className="flex justify-between gap-3 font-medium">
                     <dt>Disponible para vender</dt><dd className="tabular-nums">{ubicacion.disponible}</dd>
                   </div>
@@ -127,7 +128,7 @@ export default function ProductosPage() {
                     <div className="flex justify-between gap-3"><dt>Físicas en buen estado</dt><dd className="tabular-nums">{ubicacion.desglose.fisicas}</dd></div>
                     <div className="flex justify-between gap-3"><dt>Reservadas</dt><dd className="tabular-nums">{ubicacion.desglose.reservadas}</dd></div>
                   </>}
-                </dl>
+                </dl> : <p className="mt-3 text-sm text-zinc-600">Esta sucursal no trabaja esta marca.</p>}
               </li>
             ))}
           </ul>

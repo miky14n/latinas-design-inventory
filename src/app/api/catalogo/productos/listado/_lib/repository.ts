@@ -18,7 +18,14 @@ export async function listProducts(client: PoolClient, filters: ProductFilters) 
   const where = `WHERE ($1 = '' OR strpos(lower(p.nombre), lower($1)) > 0 OR strpos(lower(p.codigo_interno), lower($1)) > 0
     OR EXISTS (SELECT 1 FROM variante v JOIN codigo_variante cv ON cv.variante_id = v.id AND cv.sustituido_en IS NULL
       WHERE v.producto_id = p.id AND strpos(lower(cv.codigo), lower($1)) > 0))
-    AND ($2::bigint IS NULL OR p.categoria_id = $2::bigint)
+    AND ($2::bigint IS NULL OR p.categoria_id IN (
+      WITH RECURSIVE rama(id) AS (
+        SELECT id FROM categoria WHERE id = $2::bigint
+        UNION
+        SELECT c.id FROM categoria c JOIN rama ON c.padre_id = rama.id
+      )
+      SELECT id FROM rama
+    ))
     AND ($3::bigint IS NULL OR p.marca_id = $3::bigint)
     AND ($4 = 'todos' OR p.activo = ($4 = 'activos'))`;
   const params = [filters.query, filters.category, filters.brand, filters.status];
@@ -50,6 +57,7 @@ export async function productDetail(client: PoolClient, id: string, verReservas:
     )
     SELECT a.id::text AS id, coalesce(t.nombre, a.nombre) AS nombre,
       coalesce(t.codigo, a.codigo) AS codigo, t.direccion,
+      (t.marca_id IS NULL OR t.marca_id = (SELECT marca_id FROM producto WHERE id = $1)) AS admite_marca,
       coalesce(s.disponible, 0)::text AS disponible,
       CASE WHEN $2::boolean AND (t.tipo = 'MAYORISTA' OR (a.tienda_id IS NULL AND a.codigo = 'CENTRAL'))
         THEN json_build_object('fisicas', coalesce(s.existencia, 0)::text,
