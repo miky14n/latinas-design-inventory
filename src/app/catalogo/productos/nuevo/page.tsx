@@ -650,14 +650,14 @@ export default function NuevoProductoPage() {
       />
 
       {/* Barra de Acciones */}
-      <div className="sticky bottom-4 z-20 flex flex-col gap-3 rounded-2xl border border-zinc-200 bg-white/95 p-4 shadow-lg backdrop-blur-md sm:flex-row sm:items-center sm:justify-between sm:px-6">
+      <div className="flex flex-col gap-3 rounded-2xl border border-zinc-200 bg-white/95 p-4 shadow-lg sm:sticky sm:bottom-4 sm:z-20 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:backdrop-blur-md">
         <div className="text-xs text-zinc-500">
           <span>Campos marcados con </span>
           <span className="font-bold text-red-500">*</span>
           <span> son obligatorios. Las variantes requieren código de 7 caracteres.</span>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <Link
             href="/"
             className="rounded-lg border border-zinc-300 bg-white px-4 py-2 text-xs font-medium text-zinc-700 hover:bg-zinc-50"

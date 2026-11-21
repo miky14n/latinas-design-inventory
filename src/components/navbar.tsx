@@ -41,7 +41,7 @@ export function Navbar({ canManageUsers = false }: { canManageUsers?: boolean })
           </span>
         </Link>
 
-        <nav aria-label="Navegación principal" className="hidden items-center gap-1 md:flex">
+        <nav aria-label="Navegación principal" className="hidden items-center gap-1 lg:flex">
           {navItems.map((item) => {
             const isActive = item.active(pathname);
             return (
@@ -65,7 +65,7 @@ export function Navbar({ canManageUsers = false }: { canManageUsers?: boolean })
           aria-controls="mobile-navigation"
           aria-expanded={isOpen}
           aria-label={isOpen ? "Cerrar menú" : "Abrir menú"}
-          className="inline-flex items-center justify-center rounded-lg p-2 text-zinc-700 hover:bg-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-900 md:hidden"
+          className="inline-flex items-center justify-center rounded-lg p-2 text-zinc-700 hover:bg-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-900 lg:hidden"
         >
           {isOpen ? (
             <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
@@ -80,7 +80,7 @@ export function Navbar({ canManageUsers = false }: { canManageUsers?: boolean })
       </div>
 
       {isOpen && (
-        <nav id="mobile-navigation" aria-label="Navegación móvil" className="border-t border-zinc-200 bg-white px-4 py-3 md:hidden">
+        <nav id="mobile-navigation" aria-label="Navegación móvil" className="max-h-[calc(100dvh-4rem)] overflow-y-auto border-t border-zinc-200 bg-white px-4 py-3 lg:hidden">
           {navItems.map((item) => {
             const isActive = item.active(pathname);
             return (

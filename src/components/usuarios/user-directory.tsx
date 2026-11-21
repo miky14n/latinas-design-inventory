@@ -94,7 +94,7 @@ export function UserDirectory(props: UserDirectoryProps) {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full min-w-max border-collapse text-left text-sm">
+              <table className="w-full border-collapse text-left text-sm max-sm:block max-sm:[&_thead]:sr-only max-sm:[&_tbody]:block max-sm:[&_tr]:block max-sm:[&_tr]:py-3 max-sm:[&_td]:block max-sm:[&_td]:py-1 max-sm:[&_td]:text-left sm:min-w-max">
                 <thead className="border-b border-zinc-200 bg-zinc-50/80 text-xs font-semibold text-zinc-700 uppercase tracking-wider">
                   <tr>
                     <th className="px-5 py-3.5">Usuario</th>
@@ -181,7 +181,7 @@ export function UserDirectory(props: UserDirectoryProps) {
 
                         {/* Acciones */}
                         <td className="px-5 py-4 text-right">
-                          <div className="flex items-center justify-end gap-2">
+                          <div className="flex flex-wrap items-center justify-start gap-2 sm:justify-end">
                             <button
                               type="button"
                               onClick={() => onEditUser(user)}

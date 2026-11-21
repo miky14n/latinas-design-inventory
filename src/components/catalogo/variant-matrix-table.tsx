@@ -128,15 +128,16 @@ export function VariantMatrixTable({
       )}
 
       {/* Grid Table */}
+      <p className="mt-4 text-xs text-zinc-600 sm:hidden">Desliza la tabla horizontalmente para ver y editar todas las tallas.</p>
       <div className="mt-6 overflow-x-auto rounded-xl border border-zinc-200">
         <table className="w-full min-w-max border-collapse text-left text-xs">
           <thead className="border-b border-zinc-200 bg-zinc-50 font-semibold text-zinc-800">
             <tr>
-              <th className="sticky left-0 z-10 border-r border-zinc-200 bg-zinc-50 px-4 py-3 min-w-44">
+              <th className="sticky left-0 z-10 min-w-28 border-r border-zinc-200 bg-zinc-50 px-2 py-3 sm:min-w-44 sm:px-4">
                 Color \ Talla
               </th>
               {activeTallas.map((talla) => (
-                <th key={talla.id} className="border-r border-zinc-200 px-3 py-3 text-center min-w-36">
+                <th key={talla.id} className="min-w-28 border-r border-zinc-200 px-3 py-3 text-center sm:min-w-36">
                   <span className="block font-bold text-zinc-900">{talla.valor}</span>
                 </th>
               ))}
@@ -146,7 +147,7 @@ export function VariantMatrixTable({
             {activeColores.map((color) => (
               <tr key={color.id} className="hover:bg-zinc-50/50">
                 {/* Fixed Color Column */}
-                <td className="sticky left-0 z-10 border-r border-zinc-200 bg-white px-4 py-3 font-medium text-zinc-900">
+                <td className="sticky left-0 z-10 border-r border-zinc-200 bg-white px-2 py-3 font-medium text-zinc-900 sm:px-4">
                   <div className="flex items-center gap-2">
                     {color.hex && /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i.test(color.hex.trim()) && (
                       <span aria-hidden="true" className="h-4 w-4 shrink-0 rounded border border-zinc-400" style={{ backgroundColor: color.hex.trim() }} />

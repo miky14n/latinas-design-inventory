@@ -48,7 +48,7 @@ export function RgbPaletColor({ value, onChange }: { value: string; onChange: (h
                       <span aria-hidden="true" className="h-6 w-8 rounded border border-zinc-300" style={{ backgroundColor: /^#[0-9a-f]{6}$/i.test(value) ? value : "#000000" }} />
                       Elegir
                     </button>
-                    {paletteOpen && <div id="selector-color" className="absolute bottom-full right-0 z-30 mb-2 w-72 max-w-[calc(100vw-2rem)] rounded-xl border border-zinc-200 bg-white p-4 shadow-xl">
+                    {paletteOpen && <div id="selector-color" className="fixed inset-x-4 bottom-4 z-[60] max-h-[calc(100dvh-2rem)] overflow-y-auto rounded-xl border border-zinc-200 bg-white p-4 shadow-xl sm:absolute sm:inset-x-auto sm:bottom-full sm:right-0 sm:mb-2 sm:w-72">
                       <div aria-hidden="true" onPointerDown={chooseFromSquare} onPointerMove={chooseFromSquare} className="relative h-36 w-full touch-none cursor-crosshair overflow-hidden rounded-lg border border-zinc-200">
                         <svg className="pointer-events-none absolute inset-0 h-full w-full"><rect width="100%" height="100%" fill={hsvToHex(hue, 1, 1)} /></svg>
                         <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-white to-transparent" />
