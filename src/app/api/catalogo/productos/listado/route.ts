@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
+import { connection } from "next/server";
 import { ProductListError } from "./_lib/errors";
 import { readProducts } from "./_lib/service";
 
 export async function GET(request: Request) {
+  await connection();
   try { return NextResponse.json({ data: await readProducts(new URL(request.url).searchParams) }); }
   catch (error) {
     if (error instanceof ProductListError) {

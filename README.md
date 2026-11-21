@@ -1,47 +1,59 @@
-Aplicación de inventario para Latina's Design, construida con Next.js, TypeScript y Tailwind CSS.
+# Latina's Design Inventory
 
-## Getting Started
+Aplicación fullstack de inventario para Latina's Design, construida con Next.js 16, TypeScript, Tailwind CSS y PostgreSQL en Neon.
+
+## Requisitos
+
+- Node.js y npm
+- Una base PostgreSQL de Neon con el esquema del proyecto
+- Neon Auth configurado
 
 ## Configuración local
 
-Configura las variables privadas en `.env.local`:
+Instala dependencias:
 
-- `DATABASE_URL`: conexión de PostgreSQL generada por Neon para el rol predeterminado del proyecto. Se usa solo desde el backend; nunca la expongas al navegador ni la declares con prefijo `NEXT_PUBLIC_`.
-- `NEON_AUTH_BASE_URL` y `NEON_AUTH_COOKIE_SECRET`: configuración de Neon Auth para el servidor.
+```bash
+npm install
+```
 
-La API de catálogo verifica la sesión, que el perfil interno esté activo y el permiso `GESTIONAR_CATALOGO`. La carga inicial asigna ese permiso a `DUENA` y `ADMINISTRACION`; otros roles no pueden crear productos hasta que se les conceda expresamente. El servidor usa `DATABASE_URL`. Como el rol predeterminado de Neon puede tener privilegios amplios, la API debe validar cada operación y mantener la conexión exclusivamente en el servidor.
+Crea `.env.local` en la raíz y configura las variables privadas del servidor:
+
+```env
+DATABASE_URL=
+NEON_AUTH_BASE_URL=
+NEON_AUTH_COOKIE_SECRET=
+```
+
+No agregues valores reales de estas variables al repositorio. `DATABASE_URL` conecta con Neon desde el backend. Las credenciales y la sesión de Neon Auth también se manejan en el servidor.
 
 ## Desarrollo
 
-Inicia el servidor:
-
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abre [http://localhost:3000](http://localhost:3000). Para acceder desde otro dispositivo en la red local, inicia Next.js exponiendo el servidor en la interfaz de red de la computadora y usa la dirección local que indique la terminal. La cámara del navegador requiere HTTPS; para pruebas desde un celular, usa un túnel HTTPS hacia el servidor local.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Compilación
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm run start
+```
 
-## Learn More
+El proyecto usa Cache Components. Las partes de la interfaz que dependen de sesión esperan una solicitud dentro de un límite `Suspense`, mientras el resto puede formar parte de la salida prerenderizada.
 
-To learn more about Next.js, take a look at the following resources:
+## Estructura
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `src/app`: páginas, layouts y Route Handlers de la API.
+- `src/app/api`: validación, autorización, servicios y acceso a datos del servidor.
+- `src/components`: componentes compartidos de interfaz.
+- `src/lib/server`: utilidades compartidas exclusivas del servidor.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Las pantallas consumen la API mediante `fetch`. Las consultas SQL, reglas de negocio y credenciales permanecen en el backend.
 
-## Deploy on Vercel
+## Despliegue
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Configura `DATABASE_URL`, `NEON_AUTH_BASE_URL` y `NEON_AUTH_COOKIE_SECRET` en las variables de entorno privadas del proveedor de despliegue. No guardes secretos en archivos versionados, como `.gitignore`, ni en el código fuente. Si una credencial se expone en un commit, rótala y elimina la exposición del historial según el procedimiento del repositorio.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+El proyecto puede desplegarse en Vercel o Netlify con el adaptador de Next.js correspondiente. Configura las variables de entorno en el proveedor y ejecuta el build de producción allí.
