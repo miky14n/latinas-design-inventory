@@ -193,6 +193,9 @@ export default function UsuariosPage() {
     if (!createData.rol_id) {
       errors.rol_id = "Debes seleccionar un rol para el usuario.";
     }
+    if (["SUPERVISORA", "VENDEDORA"].includes(roles.find(r => String(r.id) === createData.rol_id)?.codigo ?? "") && !createData.tienda_id) {
+      errors.tienda_id = "Selecciona la tienda asignada.";
+    }
 
     if (Object.keys(errors).length > 0) {
       setCreateErrors(errors);
@@ -242,6 +245,10 @@ export default function UsuariosPage() {
 
     if (!editData.rol_id) {
       setEditErrors({ rol_id: "El rol es obligatorio." });
+      return;
+    }
+    if (["SUPERVISORA", "VENDEDORA"].includes(roles.find(r => String(r.id) === editData.rol_id)?.codigo ?? "") && !editData.tienda_id) {
+      setEditErrors({ tienda_id: "Selecciona la tienda asignada." });
       return;
     }
 

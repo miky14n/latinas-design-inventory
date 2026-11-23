@@ -12,7 +12,7 @@ const modulos = [
   { nombre: "Recepción de mercadería", descripcion: "Registro de mercadería recibida en el almacén central.", estado: "Para pruebas", href: "/inventario/recepciones" },
   { nombre: "Escaneo de códigos", descripcion: "Lectura desde la cámara y conexión con celular para completar el buscador.", estado: "Para pruebas", href: "/inventario/recepciones" },
   { nombre: "Gestión de usuarios", descripcion: "Cuentas, roles operativos y asignaciones a tiendas.", estado: "Para pruebas", href: "/admin/usuarios" },
-  { nombre: "Traspasos entre ubicaciones", descripcion: "Envío y recepción de mercadería entre almacenes.", estado: "Pendiente" },
+  { nombre: "Traspasos entre ubicaciones", descripcion: "Envío y recepción de mercadería entre ubicaciones, con acceso por tienda y registro de diferencias.", estado: "Para pruebas", href: "/inventario/traspasos" },
   { nombre: "Ventas y reservas", descripcion: "Ventas, líneas, pagos pendientes y reservas de productos.", estado: "Pendiente" },
   { nombre: "Caja", descripcion: "Sesiones y movimientos asociados a la operación diaria.", estado: "Pendiente" },
   { nombre: "Devoluciones", descripcion: "Registro de devoluciones y cambios vinculados a ventas.", estado: "Pendiente" },

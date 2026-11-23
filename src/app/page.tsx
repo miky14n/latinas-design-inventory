@@ -21,6 +21,12 @@ const accesos = [
     accion: "Registrar recepción",
   },
   {
+    href: "/inventario/traspasos",
+    nombre: "Traspasos entre ubicaciones",
+    descripcion: "Envía mercadería y confirma su recepción en destino.",
+    accion: "Ver traspasos",
+  },
+  {
     href: "/catalogo/configuracion",
     nombre: "Configuración del catálogo",
     descripcion: "Administra marcas, categorías, tallas y colores.",

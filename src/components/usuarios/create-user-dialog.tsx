@@ -19,6 +19,7 @@ interface CreateUserDialogProps {
 
 export function CreateUserDialog(props: CreateUserDialogProps) {
   const { roles, tiendas, isSubmitting, onClose, createData, setCreateData, createErrors, setCreateErrors, onSubmit } = props;
+  const requiereTienda = ["SUPERVISORA", "VENDEDORA"].includes(roles.find(r => String(r.id) === createData.rol_id)?.codigo ?? "");
   return (
     <>
         <UserDialog titleId="create-user-title" busy={isSubmitting} error={props.actionError} onClose={() => onClose()}>
@@ -106,7 +107,8 @@ export function CreateUserDialog(props: CreateUserDialogProps) {
                   required
                   value={createData.rol_id}
                   onChange={(e) => {
-                    setCreateData((prev) => ({ ...prev, rol_id: e.target.value }));
+                    const rol = e.target.value;
+                    setCreateData((prev) => ({ ...prev, rol_id: rol, tienda_id: ["SUPERVISORA", "VENDEDORA"].includes(roles.find(r => String(r.id) === rol)?.codigo ?? "") ? prev.tienda_id : "" }));
                     if (createErrors.rol_id) setCreateErrors((prev) => ({ ...prev, rol_id: "" }));
                   }}
                   className={`mt-1 block w-full rounded-lg border px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-950 ${
@@ -126,27 +128,25 @@ export function CreateUserDialog(props: CreateUserDialogProps) {
               </div>
 
               {/* Tienda asignada */}
-              <div>
+              {requiereTienda && <div>
                 <label htmlFor="create-tienda" className="block text-xs font-medium text-zinc-700">
-                  Tienda asignada (opcional)
+                  Tienda asignada <span className="text-red-500">*</span>
                 </label>
                 <select
                   id="create-tienda"
                   value={createData.tienda_id}
-                  onChange={(e) => setCreateData((prev) => ({ ...prev, tienda_id: e.target.value }))}
+                  onChange={(e) => { setCreateData((prev) => ({ ...prev, tienda_id: e.target.value })); setCreateErrors(prev => ({ ...prev, tienda_id: "" })); }}
                   className="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-950"
                 >
-                  <option value="">Sin tienda específica (Global)</option>
+                  <option value="">Selecciona una tienda</option>
                   {tiendas.map((t) => (
                     <option key={t.id} value={String(t.id)}>
                       {t.nombre} {t.codigo ? `(${t.codigo})` : ""}
                     </option>
                   ))}
                 </select>
-                <p className="mt-1 text-[11px] text-zinc-500">
-                  Aplica principalmente a roles de venta o atención en sucursal física.
-                </p>
-              </div>
+                {createErrors.tienda_id && <p className="mt-1 text-xs text-red-600">{createErrors.tienda_id}</p>}
+              </div>}
 
               {/* Acciones */}
               <div className="mt-6 flex items-center justify-end gap-3 border-t border-zinc-100 pt-4">

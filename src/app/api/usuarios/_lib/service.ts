@@ -91,6 +91,8 @@ async function validateAssignment(
       "CONFLICT",
       "El rol de dueña se reserva para la cuenta principal.",
     );
+  if (["SUPERVISORA", "VENDEDORA"].includes(role.codigo) && storeId === null)
+    throw new UsuarioError("VALIDATION", "Selecciona una tienda para este rol.");
   if (storeId !== null && !(await repository.hasActiveStore(storeId)))
     throw new UsuarioError(
       "VALIDATION",
@@ -202,6 +204,8 @@ export async function updateUser(id: string, value: unknown) {
         "CONFLICT",
         "No puedes cambiar tu propio rol desde este panel.",
       );
+    if (["SUPERVISORA", "VENDEDORA"].includes(role.codigo) && input.tienda_id === null && input.activo)
+      throw new UsuarioError("VALIDATION", "Selecciona una tienda para este rol.");
     if (
       input.tienda_id !== null &&
       !(await repository.hasActiveStore(input.tienda_id))
