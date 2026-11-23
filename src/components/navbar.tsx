@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -50,9 +51,7 @@ export function Navbar({ canManageUsers = false }: { canManageUsers?: boolean })
           className="flex items-center gap-3 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-900 focus-visible:ring-offset-2"
           aria-label="Latina's Design, inicio"
         >
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-zinc-950 text-sm font-semibold tracking-tight text-white">
-            L
-          </span>
+          <Image src="/Logo.png" alt="" width={52} height={48} className="h-12 w-[52px] object-contain" />
           <span className="hidden flex-col sm:flex">
             <span className="text-sm font-semibold tracking-tight text-zinc-950">Latina&apos;s Design</span>
             <span className="text-xs text-zinc-500">Inventario y operaciones</span>

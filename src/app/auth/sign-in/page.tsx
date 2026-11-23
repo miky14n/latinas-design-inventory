@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { authClient } from "@/lib/auth-client";
 
 export default function SignIn() {
@@ -30,6 +31,7 @@ export default function SignIn() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-zinc-50 p-6">
       <form onSubmit={submit} className="flex w-full max-w-sm flex-col gap-4 rounded-xl bg-white p-8 shadow-sm">
+        <Image src="/Logo.png" alt="Latina's Design" width={140} height={128} className="mx-auto h-28 w-auto object-contain" priority />
         <h1 className="text-2xl font-semibold text-zinc-900">Iniciar sesión</h1>
         <label className="flex flex-col gap-1 text-sm text-zinc-700">Correo
           <input name="email" type="email" required autoComplete="email" className="rounded border border-zinc-300 p-2" />
