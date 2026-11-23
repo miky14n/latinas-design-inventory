@@ -44,7 +44,7 @@ export function Navbar({ canManageUsers = false }: { canManageUsers?: boolean })
   }
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-zinc-200 bg-white/95 backdrop-blur-md">
+    <header className="sticky top-0 z-50 w-full border-b border-brand-gold/40 bg-[#fff9f8]/95 shadow-sm backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link
           href="/"
@@ -54,23 +54,23 @@ export function Navbar({ canManageUsers = false }: { canManageUsers?: boolean })
           <Image src="/Logo.png" alt="" width={52} height={48} className="h-12 w-[52px] object-contain" />
           <span className="hidden flex-col sm:flex">
             <span className="text-sm font-semibold tracking-tight text-zinc-950">Latina&apos;s Design</span>
-            <span className="text-xs text-zinc-500">Inventario y operaciones</span>
+            <span className="text-xs text-brand-gold-dark">Inventario y operaciones</span>
           </span>
         </Link>
 
         <div className="flex items-center gap-2">
           <nav aria-label="Navegación principal" className="hidden items-center gap-2 lg:flex">
-            <Link href="/" aria-current={pathname === "/" ? "page" : undefined} className="rounded-lg px-3 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-100">Inicio</Link>
+            <Link href="/" aria-current={pathname === "/" ? "page" : undefined} className={`rounded-lg px-3 py-2 text-sm font-medium ${pathname === "/" ? "bg-brand-primary text-brand-text" : "text-zinc-700 hover:bg-brand-primary/60"}`}>Inicio</Link>
             {[
               { titulo: "Catálogo", items: navItems.filter(item => item.href.startsWith("/catalogo/")) },
               { titulo: "Inventario", items: navItems.filter(item => item.href.startsWith("/inventario/")) },
             ].map(grupo => <details key={grupo.titulo} className="relative">
-              <summary className="cursor-pointer list-none rounded-lg px-3 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-900">{grupo.titulo} <span aria-hidden="true">▾</span></summary>
+              <summary className={`cursor-pointer list-none rounded-lg px-3 py-2 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold-dark ${grupo.items.some(item => item.active(pathname)) ? "bg-brand-primary text-brand-text" : "text-zinc-700 hover:bg-brand-primary/60"}`}>{grupo.titulo} <span aria-hidden="true" className="text-brand-gold-dark">▾</span></summary>
               <div className="absolute right-0 top-full z-50 mt-1 w-60 rounded-xl border border-zinc-200 bg-white p-1 shadow-lg">{grupo.items.map(item => <Link key={item.href} href={item.href} aria-current={item.active(pathname) ? "page" : undefined} onClick={e => e.currentTarget.closest("details")?.removeAttribute("open")} className={`block rounded-lg px-3 py-2 text-sm ${item.active(pathname) ? "bg-zinc-100 font-semibold text-zinc-950" : "text-zinc-700 hover:bg-zinc-50"}`}>{item.label}</Link>)}</div>
             </details>)}
             {canManageUsers && <Link href="/admin/usuarios" aria-current={pathname.startsWith("/admin/usuarios") ? "page" : undefined} className="rounded-lg px-3 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-100">Usuarios</Link>}
           </nav>
-          <button type="button" onClick={cerrarSesion} disabled={cerrando} className="rounded-lg border border-zinc-300 px-3 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50 disabled:opacity-50">{cerrando ? "Saliendo…" : "Cerrar sesión"}</button>
+          <button type="button" onClick={cerrarSesion} disabled={cerrando} className="rounded-lg border border-brand-gold/60 bg-white px-3 py-2 text-sm font-medium text-brand-gold-dark hover:bg-brand-cream disabled:opacity-50">{cerrando ? "Saliendo…" : "Cerrar sesión"}</button>
 
         <button
           type="button"
@@ -106,7 +106,7 @@ export function Navbar({ canManageUsers = false }: { canManageUsers?: boolean })
                 onClick={() => setIsOpen(false)}
                 aria-current={isActive ? "page" : undefined}
                 className={`block rounded-lg px-3 py-2.5 text-sm font-medium ${
-                  isActive ? "bg-zinc-100 text-zinc-950" : "text-zinc-700 hover:bg-zinc-50"
+                  isActive ? "bg-brand-primary text-brand-text" : "text-zinc-700 hover:bg-brand-cream"
                 }`}
               >
                 {item.label}

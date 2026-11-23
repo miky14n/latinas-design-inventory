@@ -21,7 +21,7 @@ const api = "/api/inventario/ingresos";
 const campo =
   "mt-1 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm";
 const boton =
-  "rounded-lg bg-zinc-950 px-4 py-2 text-sm font-medium text-white disabled:opacity-50";
+  "rounded-lg bg-brand-gold px-4 py-2 text-sm font-semibold text-brand-text transition hover:bg-[#d7b876] disabled:opacity-50";
 const panel = "rounded-2xl border border-zinc-200 bg-white p-5";
 const descripcion = (v: Variante) =>
   [v.nombre, v.codigo_interno, v.talla, v.color].join(" · ");

@@ -49,7 +49,7 @@ type Datos = {
 const field =
   "w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900";
 const button =
-  "rounded-lg bg-zinc-950 px-4 py-2 text-sm font-medium text-white disabled:opacity-50";
+  "rounded-lg bg-brand-gold px-4 py-2 text-sm font-semibold text-brand-text transition hover:bg-[#d7b876] disabled:opacity-50";
 
 export default function TraspasosPage() {
   const [datos, setDatos] = useState<Datos | null>(null);
@@ -594,7 +594,7 @@ export default function TraspasosPage() {
                         />
                         <span
                           aria-hidden="true"
-                          className="relative h-6 w-11 shrink-0 rounded-full bg-zinc-300 transition-colors peer-checked:bg-zinc-950 peer-focus-visible:ring-2 peer-focus-visible:ring-zinc-950 peer-focus-visible:ring-offset-2 after:absolute after:left-1 after:top-1 after:h-4 after:w-4 after:rounded-full after:bg-white after:transition-transform peer-checked:after:translate-x-5"
+                          className="relative h-6 w-11 shrink-0 rounded-full bg-zinc-300 transition-colors peer-checked:bg-brand-gold-dark peer-focus-visible:ring-2 peer-focus-visible:ring-brand-gold-dark peer-focus-visible:ring-offset-2 after:absolute after:left-1 after:top-1 after:h-4 after:w-4 after:rounded-full after:bg-white after:transition-transform peer-checked:after:translate-x-5"
                         />{" "}
                         Reportar faltantes o prendas dañadas
                       </label>

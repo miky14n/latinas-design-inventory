@@ -127,13 +127,13 @@ export default function CatalogConfigurationPage() {
       </header>
       <div aria-label="Secciones del catálogo" className="flex flex-wrap gap-2 border-b border-zinc-200 pb-4">
         {sections.map((entry) => <button key={entry.key} type="button" disabled={busy} aria-pressed={section === entry.key} onClick={() => { setSection(entry.key); setForm(null); setError(""); setNotice(""); setQuery(""); }}
-          className={`rounded-lg px-3 py-2 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-950 ${section === entry.key ? "bg-zinc-950 text-white" : "bg-white text-zinc-700 hover:bg-zinc-100"}`}>{entry.title}</button>)}
+          className={`rounded-lg px-3 py-2 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold-dark ${section === entry.key ? "bg-brand-gold-dark text-white" : "bg-brand-primary/50 text-brand-text hover:bg-brand-primary"}`}>{entry.title}</button>)}
       </div>
       {notice && <p role="status" className="rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">{notice}</p>}
       {error && <p role="alert" className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-900">{error}</p>}
       <section aria-labelledby="section-title" className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-xs sm:p-6">
         <div className="flex flex-wrap items-center justify-between gap-3"><div><h2 id="section-title" className="text-lg font-semibold text-zinc-950">{current.title}</h2><p className="mt-1 text-sm text-zinc-500">Consulta y administra los registros activos e inactivos.</p></div>
-          <button type="button" disabled={busy} onClick={() => { setError(""); setNotice(""); setCustomColorCode(false); setForm({ ...emptyForm }); }} className="rounded-lg bg-zinc-950 px-4 py-2 text-sm font-semibold text-white hover:bg-zinc-800 disabled:opacity-50">Agregar {current.singular}</button></div>
+          <button type="button" disabled={busy} onClick={() => { setError(""); setNotice(""); setCustomColorCode(false); setForm({ ...emptyForm }); }} className="rounded-lg bg-brand-gold px-4 py-2 text-sm font-semibold text-brand-text hover:bg-[#d7b876] disabled:opacity-50">Agregar {current.singular}</button></div>
         <div className="mt-5 flex flex-wrap gap-3"><label className="text-xs font-medium text-zinc-700">Buscar<input value={query} onChange={(e) => setQuery(e.target.value)} className={fieldClass} placeholder="Nombre o código" /></label>
           <label className="text-xs font-medium text-zinc-700">Estado<select value={filter} onChange={(e) => setFilter(e.target.value)} className={fieldClass}><option value="todos">Todos</option><option value="activos">Activos</option><option value="inactivos">Inactivos</option></select></label></div>
         {form && <form onSubmit={submit} className="mt-5 rounded-xl border border-zinc-200 bg-zinc-50 p-4 sm:p-5">
