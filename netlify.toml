@@ -1,0 +1,6 @@
+[build.environment]
+  # NEON_BRANCH holds a Neon branch name (not a credential). Its value is a
+  # common word that also appears in Next.js's own compiled runtime files, which
+  # makes the secrets scanner report false positives. The app never reads this
+  # variable, so it is safe to exclude from scanning.
+  SECRETS_SCAN_OMIT_KEYS = "NEON_BRANCH"
