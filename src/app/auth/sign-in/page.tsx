@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { authClient } from "@/lib/auth-client";
 
 export default function SignIn() {
@@ -28,9 +29,10 @@ export default function SignIn() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-zinc-50 p-6">
-      <form onSubmit={submit} className="flex w-full max-w-sm flex-col gap-4 rounded-xl bg-white p-8 shadow-sm">
-        <h1 className="text-2xl font-semibold text-zinc-900">Iniciar sesión</h1>
+    <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-brand-cream via-brand-primary to-brand-cream p-6">
+      <form onSubmit={submit} className="flex w-full max-w-sm flex-col gap-4 rounded-3xl border border-brand-gold/40 bg-white p-8 shadow-lg shadow-brand-gold/10">
+        <Image src="/Logo.png" alt="Latina's Design" width={140} height={128} className="mx-auto h-28 w-auto object-contain" priority />
+        <h1 className="text-center font-serif text-3xl text-brand-text">Iniciar sesión</h1>
         <label className="flex flex-col gap-1 text-sm text-zinc-700">Correo
           <input name="email" type="email" required autoComplete="email" className="rounded border border-zinc-300 p-2" />
         </label>
@@ -41,7 +43,7 @@ export default function SignIn() {
           ¿Olvidaste tu contraseña?
         </Link>
         {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
-        <button disabled={pending} className="rounded bg-zinc-900 px-4 py-2 text-white disabled:opacity-50">{pending ? "Ingresando..." : "Ingresar"}</button>
+        <button disabled={pending} className="rounded-xl bg-brand-gold px-4 py-3 font-semibold text-brand-text transition hover:bg-[#d7b876] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold-dark focus-visible:ring-offset-2 disabled:opacity-50">{pending ? "Ingresando..." : "Ingresar"}</button>
       </form>
     </main>
   );
