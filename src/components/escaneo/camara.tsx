@@ -1,12 +1,45 @@
 "use client";
 
-import { BrowserMultiFormatReader, type IScannerControls } from "@zxing/browser";
+import { BrowserCodeReader, type IScannerControls } from "@zxing/browser";
+import { AztecCodeReader, ChecksumException, Code128Reader, DataMatrixReader, FormatException, MaxiCodeReader, MicroQRCodeReader, MultiFormatOneDReader, NotFoundException, PDF417Reader, QRCodeReader, ReaderException, type Reader } from "@zxing/library";
 import { useEffect, useRef, useState } from "react";
 
 type Props = {
   onScan: (codigo: string) => void;
   onClose: () => void;
 };
+
+export const restriccionesCamara: MediaStreamConstraints = {
+  audio: false,
+  video: {
+    facingMode: { ideal: "environment" },
+    width: { ideal: 1280, max: 1280 },
+    height: { ideal: 720, max: 1280 },
+  },
+};
+
+// Code 128 y QR se buscan en cada fotograma; los otros formatos, cada cuatro.
+// ZXing 0.23 registra como inesperados los errores normales de cada lector.
+export function crearLectorCodigos() {
+  const prioritarios: Reader[] = [new Code128Reader(), new QRCodeReader()];
+  const secundarios: Reader[] = [new MultiFormatOneDReader(), new MicroQRCodeReader(), new DataMatrixReader(), new AztecCodeReader(), new PDF417Reader(), new MaxiCodeReader()];
+  let intentos = 0;
+  const lector: Reader = {
+    decode(imagen, hints) {
+      const lectores = ++intentos % 4 === 0 ? [...prioritarios, ...secundarios] : prioritarios;
+      for (const candidato of lectores) {
+        try { return candidato.decode(imagen, hints); }
+        catch (error) {
+          if (error instanceof NotFoundException || error instanceof ChecksumException || error instanceof FormatException || error instanceof ReaderException) continue;
+          throw error;
+        }
+      }
+      throw new NotFoundException();
+    },
+    reset() { for (const candidato of [...prioritarios, ...secundarios]) candidato.reset(); intentos = 0; },
+  };
+  return new BrowserCodeReader(lector, new Map(), { delayBetweenScanAttempts: 100 });
+}
 
 export function CamaraEscaneo({ onScan, onClose }: Props) {
   const video = useRef<HTMLVideoElement>(null);
@@ -25,15 +58,19 @@ export function CamaraEscaneo({ onScan, onClose }: Props) {
   }, []);
 
   async function abrirCamara() {
-    if (!video.current || loading) return;
+    if (!video.current || loading || controls.current) return;
     setError("");
     setLoading(true);
     try {
-      const reader = new BrowserMultiFormatReader();
+      const reader = crearLectorCodigos();
       const scanner = await reader.decodeFromConstraints(
-        { video: { facingMode: { ideal: "environment" } } },
+        restriccionesCamara,
         video.current,
-        (result, _error, scannerControls) => {
+        (result, scanError, scannerControls) => {
+          if (scanError && !(scanError instanceof NotFoundException || scanError instanceof ChecksumException || scanError instanceof FormatException)) {
+            if (mounted.current) setError("La lectura se interrumpió. Cierra el escáner e inténtalo nuevamente.");
+            return;
+          }
           if (!result || received.current) return;
           received.current = true;
           scannerControls.stop();
